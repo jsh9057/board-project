@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.jsh.boardproject.domain.Article;
 import com.jsh.boardproject.domain.ArticleComment;
+import com.jsh.boardproject.domain.UserAccount;
 import com.jsh.boardproject.dto.ArticleCommentDto;
 import com.jsh.boardproject.repository.ArticleCommentRepository;
 import com.jsh.boardproject.repository.ArticleRepository;
@@ -37,7 +38,7 @@ class ArticleCommentServiceTest {
         // Given
         Long articleId = 1L;
         given(articleRepository.findById(articleId)).willReturn(Optional.of(
-                Article.of("title", "content", "#java"))
+                Article.of(UserAccount.of("jsh","pw",null,null,null),"title", "content", "#java"))
         );
 
         // When
