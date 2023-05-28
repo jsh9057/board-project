@@ -6,6 +6,7 @@ import com.jsh.boardproject.domain.Article;
 import com.jsh.boardproject.domain.ArticleComment;
 import com.jsh.boardproject.domain.UserAccount;
 import com.jsh.boardproject.dto.ArticleCommentDto;
+import com.jsh.boardproject.dto.UserAccountDto;
 import com.jsh.boardproject.repository.ArticleCommentRepository;
 import com.jsh.boardproject.repository.ArticleRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -37,28 +38,88 @@ class ArticleCommentServiceTest {
     void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() {
         // Given
         Long articleId = 1L;
-        given(articleRepository.findById(articleId)).willReturn(Optional.of(
-                Article.of(UserAccount.of("jsh","pw",null,null,null),"title", "content", "#java"))
-        );
+        ArticleComment expected = createArticleComment("content");
+        given(articleCommentRepository.findByArticle_Id(articleId)).willReturn(List.of(expected));
 
         // When
-        List<ArticleCommentDto> articleComments = sut.searchArticleComment(articleId);
+        List<ArticleCommentDto> actual = sut.searchArticleComments(articleId);
 
         // Then
-        assertThat(articleComments).isNotNull();
-        then(articleRepository).should().findById(articleId);
+        assertThat(actual)
+                .hasSize(1)
+                .first().hasFieldOrPropertyWithValue("content",expected.getContent());
+        then(articleCommentRepository).should().findByArticle_Id(articleId);
     }
 
     @DisplayName("댓글 정보를 입력하면, 댓글을 저장한다.")
     @Test
     void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
         // Given
+        ArticleCommentDto dto = createArticleCommentDto("댓글");
+        given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
 
         // When
-        sut.saveArticleComment(ArticleCommentDto.of(LocalDateTime.now(), "Uno", LocalDateTime.now(), "Uno", "comment"));
+        sut.saveArticleComment(dto);
 
         // Then
+        then(articleRepository).should().getReferenceById(dto.articleId());
         then(articleCommentRepository).should().save(any(ArticleComment.class));
+    }
+
+    private ArticleComment createArticleComment(String content){
+        return ArticleComment.of(
+                Article.of(createUserAccount(), "title", "content", "hashtag"),
+                createUserAccount(),
+                content
+        );
+    }
+
+    private UserAccountDto createUserAccountDto(){
+        return UserAccountDto.of(
+                1L,
+                "jsh",
+                "password",
+                "jsh@mail.com",
+                "Jsh",
+                "This is memo",
+                LocalDateTime.now(),
+                "jsh",
+                LocalDateTime.now(),
+                "jsh"
+        );
+    }
+
+    private ArticleCommentDto createArticleCommentDto(String content) {
+        return ArticleCommentDto.of(
+                1L,
+                1L,
+                createUserAccountDto(),
+                content,
+                LocalDateTime.now(),
+                "jsh",
+                LocalDateTime.now(),
+                "jsh"
+
+        );
+    }
+
+    private UserAccount createUserAccount() {
+        return UserAccount.of(
+                "jsh",
+                "password",
+                "jsh@mail.com",
+                "Jsh",
+                null
+        );
+    }
+
+    private Article createArticle(){
+        return Article.of(
+                createUserAccount(),
+                "title",
+                "content",
+                "#java"
+        );
     }
 }
