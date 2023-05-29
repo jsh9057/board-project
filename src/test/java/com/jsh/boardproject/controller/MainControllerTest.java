@@ -15,18 +15,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(MainController.class)
 class MainControllerTest {
 
-    private MockMvc mvc;
+    private final MockMvc mvc;
 
-    public MainControllerTest(@Autowired MockMvc mvc){
+    public MainControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
     }
 
     @Test
-    void givenNoting_whenRequestingRootPage_thenRedirectsToArticlesPage() throws Exception {
+    void givenNothing_whenRequestingRootPage_thenRedirectsToArticlesPage() throws Exception {
         // Given
 
         // When & Then
-        mvc.perform(get("/"))       // mockMvcRequestBuilder get
+        mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("forward:/articles"))
                 .andExpect(forwardedUrl("/articles"))
