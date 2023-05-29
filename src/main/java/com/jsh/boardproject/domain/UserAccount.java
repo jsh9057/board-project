@@ -29,7 +29,7 @@ public class UserAccount extends AuditingFields{
     @Setter private String memo;
 
     protected UserAccount() {}
-    public UserAccount(String userId, String userPassword, String email, String nickname, String memo) {
+    private UserAccount(String userId, String userPassword, String email, String nickname, String memo) {
         this.userId = userId;
         this.userPassword = userPassword;
         this.email = email;
@@ -45,7 +45,7 @@ public class UserAccount extends AuditingFields{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserAccount userAccount)) return false;
-        return id != null && Objects.equals(id, userAccount.id);
+        return id != null && id.equals(userAccount.id);
     }
 
     @Override
