@@ -24,7 +24,7 @@ public record ArticleCommentResponse(
 
         return new ArticleCommentResponse(
                 dto.id(),
-                dto.conent(),
+                dto.content(),
                 dto.createdAt(),
                 dto.userAccountDto().email(),
                 nickname

@@ -9,7 +9,7 @@ public record ArticleCommentDto(
         Long id,
         Long articleId,
         UserAccountDto userAccountDto,
-        String conent,
+        String content,
         LocalDateTime createdAt,
         String createdBy,
         LocalDateTime modifiedAt,
@@ -36,7 +36,7 @@ public record ArticleCommentDto(
         return ArticleComment.of(
                 entity,
                 userAccountDto.toEntity(),
-                conent
+                content
         );
     }
 }
