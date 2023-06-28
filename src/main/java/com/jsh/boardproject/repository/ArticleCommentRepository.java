@@ -20,6 +20,7 @@ public interface ArticleCommentRepository
         QuerydslBinderCustomizer<QArticleComment> {
 
     List<ArticleComment> findByArticle_Id(Long articleId);
+    void deleteByIdAndUserAccount_UserId(Long articleCommentId, String userId);
 
     @Override
     default void customize(QuerydslBindings bindings, QArticleComment root) {  // 추가 기능을 만들기위해 커스터마이즈를 구현을 사용
