@@ -1,0 +1,1 @@
+web: java $JAVA_OPTS -Dserver.port=$PORT -Dserver.profiles.active=heroku -jar build/libs/board-project-v1.1.jar
