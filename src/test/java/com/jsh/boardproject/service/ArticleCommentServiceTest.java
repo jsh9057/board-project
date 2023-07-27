@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.jsh.boardproject.domain.Article;
 import com.jsh.boardproject.domain.ArticleComment;
+import com.jsh.boardproject.domain.Hashtag;
 import com.jsh.boardproject.domain.UserAccount;
 import com.jsh.boardproject.dto.ArticleCommentDto;
 import com.jsh.boardproject.dto.UserAccountDto;
@@ -20,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -153,7 +155,7 @@ class ArticleCommentServiceTest {
 
     private ArticleComment createArticleComment(String content){
         return ArticleComment.of(
-                Article.of(createUserAccount(), "title", "content", "hashtag"),
+                createArticle(),
                 createUserAccount(),
                 content
         );
@@ -198,11 +200,17 @@ class ArticleCommentServiceTest {
     }
 
     private Article createArticle(){
-        return Article.of(
+        Article article = Article.of(
                 createUserAccount(),
                 "title",
-                "content",
-                "#java"
+                "content"
         );
+        article.addHashtags(Set.of(createHashtag(article)));
+
+        return article;
+    }
+
+    private Hashtag createHashtag(Article article){
+        return Hashtag.of("java");
     }
 }
