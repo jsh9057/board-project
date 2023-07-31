@@ -142,7 +142,7 @@ class ArticleServiceTest {
         assertThat(dto)
                 .hasFieldOrPropertyWithValue("title",article.getTitle())
                 .hasFieldOrPropertyWithValue("content",article.getContent())
-                .hasFieldOrPropertyWithValue("hashtag",article.getHashtags().stream()
+                .hasFieldOrPropertyWithValue("hashtagDtos",article.getHashtags().stream()
                         .map(HashtagDto::from)
                         .collect(Collectors.toUnmodifiableSet())
                 );
@@ -204,7 +204,7 @@ class ArticleServiceTest {
         assertThat(article)
                 .hasFieldOrPropertyWithValue("title",dto.title())
                 .hasFieldOrPropertyWithValue("content",dto.content())
-                .extracting("hashtag",as(InstanceOfAssertFactories.COLLECTION))
+                .extracting("hashtags",as(InstanceOfAssertFactories.COLLECTION))
                         .hasSize(1)
                         .extracting("hashtagName")
                             .containsExactly("springboot");
@@ -306,7 +306,7 @@ class ArticleServiceTest {
     }
 
     private UserAccount createUserAccount(){
-        return createUserAccount("uno");
+        return createUserAccount("jsh");
     }
 
     private UserAccount createUserAccount(String userId){
