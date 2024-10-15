@@ -8,6 +8,7 @@ import com.jsh.boardproject.dto.ArticleDto;
 import com.jsh.boardproject.dto.ArticleWithCommentsDto;
 import com.jsh.boardproject.dto.UserAccountDto;
 import com.jsh.boardproject.repository.ArticleRepository;
+import com.jsh.boardproject.repository.DummyArticlesRepository;
 import com.jsh.boardproject.repository.HashtagRepository;
 import com.jsh.boardproject.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,8 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final HashtagRepository hashtagRepository;
 
+    private final DummyArticlesRepository dummyArticlesRepository;
+
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(SearchType searchType, String searchKeyword, Pageable pageable) {
         if(searchKeyword == null || searchKeyword.isBlank()){
@@ -46,7 +49,7 @@ public class ArticleService {
             case ID -> articleRepository.findByUserAccount_UserIdContaining(searchKeyword,pageable).map(ArticleDto::from);
             case NICKNAME -> articleRepository.findByUserAccount_NicknameContaining(searchKeyword,pageable).map(ArticleDto::from);
             case HASHTAG -> articleRepository.findByHashtagNames(
-                    Arrays.stream(searchKeyword.split(" ")).toList(),
+                            Arrays.stream(searchKeyword.split(" ")).toList(),
                             pageable
                     )
                     .map(ArticleDto::from);
@@ -98,8 +101,8 @@ public class ArticleService {
     public void deleteArticle(long articleId, String userId) {
         Article article = articleRepository.getReferenceById(articleId);
         Set<Long> hashtagIds = article.getHashtags().stream()
-                        .map(Hashtag::getId)
-                        .collect(Collectors.toUnmodifiableSet());
+                .map(Hashtag::getId)
+                .collect(Collectors.toUnmodifiableSet());
 
         articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
         articleRepository.flush();
@@ -144,6 +147,14 @@ public class ArticleService {
         });
 
         return hashtags;
+    }
+
+    public void dummyArticlesWithUsers(long startIdx, long endIdx){
+        ArticleWriteService articleWriteService = new ArticleWriteService();
+        List<UserAccount> userAccounts = articleWriteService.userAccounts();
+        List<Article> articles = articleWriteService.articles(userAccounts,startIdx,endIdx);
+        dummyArticlesRepository.saveAllUser(userAccounts);
+        dummyArticlesRepository.saveAllArticle(articles);
     }
 
 }

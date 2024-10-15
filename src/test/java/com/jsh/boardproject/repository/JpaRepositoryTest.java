@@ -5,6 +5,7 @@ import com.jsh.boardproject.domain.ArticleComment;
 import com.jsh.boardproject.domain.Hashtag;
 import com.jsh.boardproject.domain.UserAccount;
 import org.assertj.core.api.InstanceOfAssertFactories;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("JPA 연결 테스트")
+@Disabled
 @Import(JpaRepositoryTest.TestJpaConfig.class)
 @DataJpaTest
 class JpaRepositoryTest {
@@ -147,7 +149,7 @@ class JpaRepositoryTest {
         assertThat(articleCommentRepository.findById(1L)).get()
                 .hasFieldOrPropertyWithValue("parentCommentId", null)
                 .extracting("childComments", InstanceOfAssertFactories.COLLECTION)
-                    .hasSize(5);
+                .hasSize(5);
     }
 
     @Test

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -35,6 +36,16 @@ public class UserAccount extends AuditingFields{
         this.memo = memo;
         this.createdBy = createdBy;
         this.modifiedBy = createdBy;
+    }
+    public UserAccount(String userId, String userPassword, String email, String nickname, String memo, String createdBy, LocalDateTime createdAt) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.email = email;
+        this.nickname = nickname;
+        this.memo = memo;
+        this.createdBy = createdBy;
+        this.modifiedBy = createdBy;
+        this.createdAt = createdAt;
     }
 
     public static UserAccount of(String userId, String userPassword, String email, String nickname, String memo){

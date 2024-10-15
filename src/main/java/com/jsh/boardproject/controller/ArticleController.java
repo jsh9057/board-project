@@ -3,13 +3,13 @@ package com.jsh.boardproject.controller;
 import com.jsh.boardproject.domain.constant.FormStatus;
 import com.jsh.boardproject.domain.constant.SearchType;
 import com.jsh.boardproject.dto.request.ArticleRequest;
-import com.jsh.boardproject.dto.UserAccountDto;
 import com.jsh.boardproject.dto.response.ArticleResponse;
 import com.jsh.boardproject.dto.response.ArticleWithCommentsResponse;
 import com.jsh.boardproject.dto.security.BoardPrincipal;
 import com.jsh.boardproject.service.ArticleService;
 import com.jsh.boardproject.service.PaginationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,10 +17,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/articles")
 @Controller
@@ -36,9 +39,12 @@ public class ArticleController {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
             ModelMap map
     ){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         Page<ArticleResponse> articles = articleService.searchArticles(searchType, searchValue, pageable).map(ArticleResponse::from);
         List<Integer> barNumber = paginationService.getPaginationBarNumbers(pageable.getPageNumber(), articles.getTotalPages());
-
+        stopWatch.stop();
+        log.info("[TEST] read time:"+stopWatch.getTotalTimeSeconds());
         map.addAttribute("articles", articles);
         map.addAttribute("paginationBarNumbers",barNumber);
         map.addAttribute("searchTypes",SearchType.values());
@@ -123,5 +129,15 @@ public class ArticleController {
         articleService.deleteArticle(articleId,boardPrincipal.getUsername());
 
         return "redirect:/articles";
+    }
+
+    @GetMapping("/test")
+    public String test(){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        articleService.dummyArticlesWithUsers(1,1000001);
+        stopWatch.stop();
+        log.info("[TEST] 100만건 삽입 소요시간: "+stopWatch.getTotalTimeSeconds());
+        return "articles/form";
     }
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -12,9 +13,11 @@ import java.util.Set;
 @Getter
 @ToString(callSuper = true)
 @Table(indexes = {
-        @Index(columnList = "title"),
+//        @Index(columnList = "title"),
         @Index(columnList = "createdAt"),
-        @Index(columnList = "createdBy")
+//        @Index(columnList = "userId, createdAt")
+        @Index(columnList = "createdAt, userId")
+//        @Index(columnList = "createdBy")
 })
 @Entity
 public class Article extends AuditingFields {
@@ -49,6 +52,14 @@ public class Article extends AuditingFields {
         this.userAccount = userAccount;
         this.title = title;
         this.content = content;
+    }
+
+    public Article(Long id, UserAccount userAccount, String title, String content, LocalDateTime createdAt) {
+        this.id = id;
+        this.userAccount = userAccount;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
     }
 
     public static Article of(UserAccount userAccount, String title, String content) {
